@@ -10,4 +10,4 @@ user/address - delete - {will take an address  and acess token}  #delete the use
 user/forgot-password - 
 user/profile-img 
 email confirmation 
-//email part done - 
+//email part done - login ,register done 
