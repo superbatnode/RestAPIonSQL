@@ -9,8 +9,11 @@ const email = async (option) => {
       { key: "Jr Node Dev", value: "Sandeep Soni" },
     ],
   };
-  const messageId = await sendMail(options);
-  return messageId;
+  try{
+    const messageId = await sendMail(options);
+    return {status: true, messageId}
+  }catch(e){
+    return {status:false, error:e}; 
+  }
 };
 module.exports = email; 
-email({email:"sandeepkumar8842@gmail.com", subject:"none", template:"test"}).then(console.log)
