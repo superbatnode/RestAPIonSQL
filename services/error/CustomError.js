@@ -9,5 +9,8 @@ class CustomError{
     static internalServerError(msg="internal server error"){
         return new CustomError(500,msg);
     }
+    static badRequestError(msg="Invalid input"){
+        return new CustomError(400, msg);
+    }
 }
 module.exports = CustomError;

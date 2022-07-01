@@ -2,30 +2,22 @@ const jwt = require("jsonwebtoken");
 const { SECRET, REFSECRET } = require("../../config");
 const bcrypt = require("bcrypt");
 const CustomError = require("../error/CustomError");
+const {getUser, getUserWithPassword } = require("../../model");
 const User = require("../../model").users;
 module.exports = {
   generateJWT,
   generateRefreshToken,
   validateToken,
-  verifyUser,
+   
 };
 
-async function verifyUser({ username, password }) {
-  const usernameExists = await User.findOne({ where: { username } });
-  if (usernameExists) {
-    const result = await bcrypt.compare(password, usernameExists.password);
-    if (!result)
-      throw CustomError.unauthorized("username or password is wrong");
-    return usernameExists;
-  }
-  throw CustomError.unauthorized("User not found");
-}
 
 async function generateJWT(data, sec = SECRET, expiry = 60 * 60) {
   try {
-    return await jwt.sign(data, sec, { expiresIn: expiry });
+    return jwt.sign(data, sec, { expiresIn: expiry });
   } catch (e) {
-    throw "can't generate the token";
+    console.log(data);
+    throw new Error("can't generate the token");
   }
 }
 async function generateRefreshToken({ username, email, type, ip }) {
@@ -40,9 +32,10 @@ async function generateRefreshToken({ username, email, type, ip }) {
 async function validateToken(token, key, req) {
   try {
     const data = await jwt.verify(token, key);
-    req.data = data; 
+    req.auth = data; 
     return req ; 
   } catch (e) {
-    throw CustomError.unauthorized("Unauthorized user");
+    console.log(e); 
+    throw new Error("Token Expired Login again");
   }
 }

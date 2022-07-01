@@ -3,9 +3,14 @@ const CustomError = require("../services/error/CustomError");
 const { validateToken } = require("../services/userservices");
 
 async function auth(req, res, next) {
-  if (!req.headers["authorization"]) return next(CustomError.unauthorized());
+  if (!req.headers["authorization"])
+    return next(CustomError.unauthorized("Invalid Token"));
   const token = req.headers["authorization"].split(" ")[1];
-  await validateToken(token, SECRET, req).catch(next);
-  next();
+  try{
+    await validateToken(token, SECRET, req)
+    next();
+  }catch(e){
+    return next(e)
+  }
 }
 module.exports = auth;
