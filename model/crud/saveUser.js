@@ -2,31 +2,29 @@ const db = require("../index");
 const User = db.users;
 const bcrypt = require("bcrypt");
 const { salt } = require("../../config");
-async function saveUser(
-  { username, email, firstName, lastName, password },
-  cb
-) {
-  const emailExists = await User.findOne({ where: { email } });
-  const usernameExists = await User.findOne({ where: { username } });
+
+async function saveUser(data, cb) {
+  const emailExists = await User.findOne({ where: { email: data.email } });
+
+  const usernameExists = await User.findOne({
+    where: { username: data.username },
+  });
 
   if (emailExists) {
-    return cb(new Error("This email is already registered"), null);
+    throw new Error("Email Already Exists");
   }
+
   if (usernameExists) {
-    return cb(new Error("username is already taken"), null);
+    throw new Error("username is already taken");
   }
-  password = await bcrypt.hash(password, salt);
+
+  data.password = await bcrypt.hash(data.password, salt);
+
   try {
-    const save = await User.create({
-      username,
-      email,
-      firstName,
-      lastName,
-      password,
-    });
-    return cb(null, save);
+    const save = await User.create(data);
+    return save;
   } catch (err) {
-    return cb(new Error("Internal Server Error"), null);
+    throw new Error(err);
   }
 }
 module.exports = saveUser;

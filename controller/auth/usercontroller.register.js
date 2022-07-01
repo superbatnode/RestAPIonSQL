@@ -1,8 +1,10 @@
 const saveUser = require("../../model/crud/saveUser");
 const register = async (req, res, next) => {
-  await saveUser(req.body, (err, data) => {
-    if (err) return next(err);
-    else res.send(data );
-  }).catch(e=>next(e));
+  try{
+    const save = await saveUser(req.body); 
+    res.json(save); 
+  }catch(e){
+    return next(e);
+  }
 };
 module.exports = register;
