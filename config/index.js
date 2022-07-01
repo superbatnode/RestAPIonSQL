@@ -9,5 +9,7 @@ module.exports={
     DB: process.env.DB,
     USER: process.env.DBUSER,
     PORT:process.env.PORT,
-    salt:Number(process.env.salt)
+    salt:Number(process.env.salt),
+    SECRET:process.env.SECRET,
+    REFSECRET:process.env.REFSECRET
 }

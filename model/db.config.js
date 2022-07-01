@@ -1,15 +1,9 @@
+const Sequelize = require("sequelize");
 const { DB, USER, PASSWORD, HOST } = require("../config");
-
-module.exports = {
-  DB,
-  USER,
-  PASSWORD,
-  HOST,
-  dialect:"mysql",
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 10000,
-    idle: 0,
-  },
-};
+const sequelize = new Sequelize(DB, USER, PASSWORD, {
+  host: HOST,
+  dialect: "mysql",
+  operatorsAliases: false,
+  logging: false,
+});
+module.exports = {sequelize, Sequelize}

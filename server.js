@@ -1,5 +1,5 @@
 console.clear();
-const db = require("./model");
+const db = require("./model/db.config");
 const express = require("express");
 const app = express();
 const colors = require("colors");
