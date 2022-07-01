@@ -9,21 +9,25 @@ function OTP(min = 1000000, max = 1999999) {
 }
 
 async function verifyEmail(email) {
-    console.log(salt )
+  console.log(salt);
   const result = await User.findOne({ where: { email } });
   if (!result) throw new Error("User is invalid");
   //save database token otp and username
   const otp = OTP();
-  const jwtToken =await generateJWT(
+
+  const jwtToken = await generateJWT(
     { email: result.email, reason: "Password reset" },
     REFSECRET,
     60 * 10
   );
+  console.log("result : ", result.email);
+  await PasswordModel.destroy({ where: { email: result.email } });
   const save = await PasswordModel.create({
-    user: result.username,
+    email: result.email,
     token: jwtToken,
     OTP: await bcrypt.hash(otp.toString(), salt),
   });
-  return { save, otp };
+  console.log("save : ", save);
+  return { otp, result };
 }
 module.exports = verifyEmail;

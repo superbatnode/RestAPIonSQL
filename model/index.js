@@ -4,6 +4,7 @@ const User = require("./user.model");
 const Token = require("./token.model");
 const Address = require("./address.model");
 const PasswordResetToken = require("./passwordResetToken.model");
+const Photo = require("./profilepicture.model");
 const sequelize = new Sequelize(DB, USER, PASSWORD, {
   host: HOST,
   dialect: dialect,
@@ -24,9 +25,10 @@ db.sequelize = sequelize;
 db.users = User(sequelize, Sequelize);
 db.token = Token(sequelize, Sequelize);
 db.address = Address(sequelize, Sequelize);
-db.passwordResetToken = PasswordResetToken(sequelize, Sequelize); 
+db.passwordResetToken = PasswordResetToken(sequelize, Sequelize);
+db.photo = Photo(sequelize, Sequelize);
 db.users.hasMany(Address(sequelize, Sequelize), {
   foreignKey: "username",
-  onDelete: 'CASCADE',
+  onDelete: "CASCADE",
 });
 module.exports = db;

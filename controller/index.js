@@ -7,7 +7,8 @@ const UserController = {
   getAllUserDetails: require("./auth/userecontroller.getAllUserDetails"),
   login: require("./auth/userecontroller.login"),
   profileImage: require("./auth/userecontroller.profileImage"),
-  reset: require("./auth/usercontroller.reset")
+  reset: require("./auth/usercontroller.reset"),
+  photoUpload: require("./auth/usercontroller.photoUpload")
 };
 
 module.exports = UserController;

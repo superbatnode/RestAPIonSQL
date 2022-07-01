@@ -8,9 +8,9 @@ const forgetPassword = async (req, res, next) => {
   let status;
   try {
     status = await email({
-      email: "sandeepkumar8842@gmail.com",
+      email:req.body.email,
       subject: "Reset Your Password",
-      template: optEmail(log.otp),
+      template: optEmail(log.firstName, log.otp),
     });
     console.log(status);
     res.json({ verificationEmailSent: status.status });

@@ -17,6 +17,9 @@ async function getAllUserData(username) {
       exclude: ["updatedAt", "createdAt", "username", "id"],
     },
   });
+  console.log("___________________")
+  console.log(getAllAddress);
+  console.log("___________________")
   data.address = getAllAddress;
   return data;
 }
