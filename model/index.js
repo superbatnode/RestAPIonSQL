@@ -1,22 +1,24 @@
-const { DB, USER, PASSWORD, HOST, dialect, pool } = require("./db.config");
-const Sequelize = require("sequelize");
-const User = require("./user.model");
-const sequelize = new Sequelize(DB, USER, PASSWORD, {
-  host: HOST,
-  dialect: dialect,
-  operatorsAliases: false,
-  pool: {
-    max: pool.max,
-    min: pool.min,
-    acquire: pool.acquire,
-    idle: pool.idle,
-  },
-  logging:false
-});
-
-const db = {};
-
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-db.users = User(sequelize, Sequelize);
-module.exports = db;
+const getUser = require("./user.model").getUser;
+const saveUser = require("./user.model").saveUser;
+const updatePassword = require("./user.model").updatePassword;
+const saveAddress = require("./address.model").saveAddress;
+const deleteAddress = require("./address.model").deleteAddress;
+const savePhoto = require("./profilepicture.model");
+const getAllAddress = require("./address.model").getAllAddress;
+const resetPassword = require("./passwordResetToken.model").ResetPassword;
+const deleteResetToken = require("./passwordResetToken.model").deleteResetToken;
+const getResetToken = require("./passwordResetToken.model").getResetToken;
+const getUserWithPassword = require("./user.model").getUserWithPassword;
+module.exports = {
+  savePhoto,
+  getUser,
+  saveUser,
+  updatePassword,
+  saveAddress,
+  deleteAddress,
+  getAllAddress,
+  resetPassword,
+  deleteResetToken,
+  getResetToken,
+  getUserWithPassword,
+};
