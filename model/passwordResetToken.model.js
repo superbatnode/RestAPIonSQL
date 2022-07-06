@@ -1,12 +1,19 @@
 const { REFSECRET, salt } = require("../config");
 const { generateJWT } = require("../services/userservices");
-const { sequelize, Sequelize } = require("./db.config");
 const bcrypt = require("bcrypt");
-const PasswordResetToken = sequelize.define("PasswordResetTokens", {
-  email: { type: Sequelize.STRING },
-  token: { type: Sequelize.STRING },
-  OTP: { type: Sequelize.STRING },
-});
+const connection = require("./db.config");
+
+(async () =>
+  (await connection()).query(
+    `CREATE TABLE IF NOT EXISTS PasswordResetTokens(
+    email VARCHAR(255),
+    token VARCHAR(255),
+    OTP VARCHAR(225),
+  )`,
+    function (e) {
+      throw new Error(e);
+    }
+  ))();
 
 const ResetPassword = async (email, otp) => {
   const jwtToken = await generateJWT(
@@ -14,6 +21,8 @@ const ResetPassword = async (email, otp) => {
     REFSECRET,
     60 * 10
   );
+ //start working from here 
+//  await (await connection()).query(``,function(e){if(e) throw new Error(e)});
   await PasswordResetToken.destroy({ where: { email } });
   try {
     const save = await PasswordResetToken.create({

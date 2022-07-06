@@ -1,25 +1,45 @@
-const { sequelize, Sequelize } = require("./db.config");
+const connection = require("./db.config");
 const fs = require("fs");
 const Photo = sequelize.define("Photo", {
   user: Sequelize.STRING,
   photoPath: Sequelize.STRING,
 });
+(async () => {
+  (await connection()).query(
+    `CREATE TABLE IF NOT EXISTS Photos(
+      user VARCHAR(225) NOT NULL,
+      photoPath:VARCHAR(225) NOT NULL,
+      PRIMARY KEY(user)
+    );`,
+    function (err) {
+      if (err) throw new Error(err);
+    }
+  );
+})();
 
-const savePhoto = async (username, fileName) => {
+const savePhoto = async (user, fileName) => {
   try {
-    const oldPhotoPath = await Photo.findOne({ where: { user: username } });
-    if (oldPhotoPath) {
-      await Photo.destroy({ where: { user: username } });
-      fs.unlink(oldPhotoPath.photoPath, console.error);
-    }
-    const updatePhoto = await Photo.update(
-      { photoPath: fileName },
-      { where: { user: username } }
+    const oldPhotoPath = await connection.query(
+      `SELECT * from Photos where user=${user}; `
     );
-    if (updatePhoto == 0) {
-      await Photo.create({ photoPath: fileName, user: username });
+    if (oldPhotoPath) {
+      (await connection()).query(
+        `UPDATE Photos
+      SET photopath = ${fileName}
+      WHERE user = ${user};
+      `,
+        function (err) {
+          if (err) throw new Error(err);
+        }
+      );
+      fs.unlink(oldPhotoPath.photoPath, console.error);
+      return "Photo Saved";
     }
-    return "Photo Saved"
+    const save = await connection.query(
+      `INSERT INTO Photos
+    VALUES (${user},${fileName});`
+    );
+    return "Photo Saved";
   } catch (e) {
     throw new Error("unable to save photo");
   }

@@ -1,30 +1,32 @@
-const { sequelize, Sequelize } = require("./db.config");
-const Address = sequelize.define("Address", {
-  fullAddress: {
-    type: Sequelize.STRING,
-  },
-  city: {
-    type: Sequelize.STRING,
-  },
-  pincode: {
-    type: Sequelize.STRING,
-  },
-  state: {
-    type: Sequelize.STRING,
-  },
-  mobile: {
-    type: Sequelize.STRING,
-  },
-  username: {
-    type: Sequelize.STRING,
-  },
-});
+const connection = require("./db.config");
+(async () => {
+  (await connection()).query(
+    `CREATE TABLE IF NOT EXISTS Addresses(
+        id INT AUTO_INCREMENT
+        fullAddress VARCHAR(225),
+        city VARCHAR(225) NOT NULL,
+        pincode VARCHAR(225) NOT NULL,
+        state VARCHAR(225) NOT NULL,
+        mobile VARCHAR(225) NOT NULL,
+        username VARCHAR(225) NOT NULL,
+        PRIMARY KEY(username)
+      );`,
+    function (err) {
+      if (err) throw new Error(err);
+    }
+  );
+})();
 
 const deleteAddress = async (id, username) => {
   try {
-    const result = await Address.destroy({
-      where: { id, username },
-    });
+    const result = (await connection()).query(
+      `
+      DELETE FROM Addresses WHERE id=${id},username=${username}
+    `,
+      function (err) {
+        if (err) throw new Error(err.message);
+      }
+    );
     return result;
   } catch (e) {
     console.log(e);
@@ -33,9 +35,16 @@ const deleteAddress = async (id, username) => {
 };
 
 const saveAddress = async (data) => {
-  console.log("=============== ", data);
   try {
-    const save = await Address.create(data);
+    const save = (await connection()).query(
+      `
+      INSERT INTO Addresses
+      VALUES(NULL, ${data.fullAddress},${data.city},${data.pincode},${data.state},${data.mobile},${data.username})
+      `,
+      function (e) {
+        if (e) throw new Error(e.message);
+      }
+    );
     return save;
   } catch (err) {
     console.log(err);
@@ -45,12 +54,14 @@ const saveAddress = async (data) => {
 
 const getAllAddress = async (username) => {
   try {
-    return await Address.findAll({
-      where: { username },
-      attributes: {
-        exclude: ["updatedAt", "createdAt", "username", "id"],
-      },
-    });
+    return (await connection()).query(
+      `SELECT fullAddress, city, pincode, state, mobile FROM Addresses WHERE username=${username}`,
+      function (e) {
+        if (e) {
+          throw new Error(e.message);
+        }
+      }
+    );
   } catch (e) {
     console.log(e);
     throw new Error("Unable to get all address");
@@ -60,5 +71,5 @@ const getAllAddress = async (username) => {
 module.exports = {
   saveAddress,
   deleteAddress,
-  getAllAddress
+  getAllAddress,
 };
